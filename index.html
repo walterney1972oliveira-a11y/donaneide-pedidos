@@ -164,7 +164,9 @@ let tamanhoTexto = document.getElementById("tamanho").options[document.getElemen
 let bebidaTexto = document.getElementById("bebida").options[document.getElementById("bebida").selectedIndex].text;
 let localTexto = document.getElementById("localidade").options[document.getElementById("localidade").selectedIndex].text;
 
-let numeroPedido = Math.floor(Math.random() * 10000);
+let numeroPedido = localStorage.getItem("numeroPedido") || 0;
+numeroPedido++;
+localStorage.setItem("numeroPedido", numeroPedido);
 
 let mensagem =
 "🍛 NOVO PEDIDO - Dona Neide\n\n" +
@@ -202,5 +204,6 @@ document.getElementById("painel").style.display = "none";
 </body>
 
 </html>
+
 
 
