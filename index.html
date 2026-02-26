@@ -144,7 +144,10 @@ document.getElementById("total").innerText =
 }
 
 function finalizar(){
+let agora = new Date();
 
+let data = agora.toLocaleDateString("pt-BR");
+let hora = agora.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
 let nome = document.getElementById("nome").value;
 let endereco = document.getElementById("endereco").value;
 let pagamento = document.getElementById("pagamento").value;
@@ -165,7 +168,9 @@ let numeroPedido = Math.floor(Math.random() * 10000);
 
 let mensagem =
 "🍛 NOVO PEDIDO - Dona Neide\n\n" +
-"🧾 Pedido Nº: " + numeroPedido + "\n\n" +
+"🧾 Pedido Nº: " + numeroPedido + "\n" +
+"🕒 Data: " + data + "\n" +
+"⏰ Hora: " + hora + "\n\n" +
 "👤 Nome: " + nome + "\n" +
 "📍 Endereço: " + endereco + "\n" +
 "📦 Localidade: " + localTexto + "\n\n" +
@@ -197,4 +202,5 @@ document.getElementById("painel").style.display = "none";
 </body>
 
 </html>
+
 
