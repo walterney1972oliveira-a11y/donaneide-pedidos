@@ -129,108 +129,59 @@ button{
 
 <script>
 let senhaAdmin = "1234";
+
 function calcular(){
-let t = parseFloat(tamanho.value)||0;
-let b = parseFloat(bebida.value)||0;
-let l = parseFloat(localidade.value)||0;
-let total = t+b+l;
-document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
+
+let t = parseFloat(document.getElementById("tamanho").value) || 0;
+let b = parseFloat(document.getElementById("bebida").value) || 0;
+let l = parseFloat(document.getElementById("localidade").value) || 0;
+
+let total = t + b + l;
+
+document.getElementById("total").innerText =
+"Total: R$ " + total.toFixed(2);
+
 }
+
 function finalizar(){
 
+let nome = document.getElementById("nome").value;
+let endereco = document.getElementById("endereco").value;
+let pagamento = document.getElementById("pagamento").value;
+
 let totalTexto = document.getElementById("total").innerText;
+let total = parseFloat(totalTexto.replace("Total: R$ ", "")) || 0;
 
-if(totalTexto === ""){
-    alert("Calcule o pedido primeiro!");
-    return;
+if(total === 0){
+alert("Selecione os itens do pedido!");
+return;
 }
 
-let total = parseFloat(totalTexto.replace("Total: R$ ", ""));
+let mensagem =
+"Pedido:\n\n" +
+"Nome: " + nome + "\n" +
+"Endereço: " + endereco + "\n" +
+"Pagamento: " + pagamento + "\n" +
+"Total: R$ " + total.toFixed(2);
 
-let pedido = {
-    nome: nome.value,
-    endereco: endereco.value,
-    total: total,
-    data: new Date().toLocaleDateString()
-};
+let telefone = "556992509281"; // coloque seu número com DDD
 
-let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
-pedidos.push(pedido);
-localStorage.setItem("pedidos", JSON.stringify(pedidos));
+window.open("https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem));
 
-let msg = `Olá, meu nome é ${pedido.nome}
-Pedido realizado.
-Total: R$ ${pedido.total.toFixed(2)}
-Endereço: ${pedido.endereco}`;
-
-window.open("https://wa.me/5569992509281?text=" + encodeURIComponent(msg));
-
-alert("Pedido salvo com sucesso!");
-
-}
-nome:nome.value,
-endereco:endereco.value,
-total:total,
-data:new Date().toLocaleDateString()
-};
-
-let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
-pedidos.push(pedido);
-localStorage.setItem("pedidos",JSON.stringify(pedidos));
-
-let msg=`Olá, meu nome é ${pedido.nome}
-Pedido realizado.
-Total: R$ ${pedido.total.toFixed(2)}
-Endereço: ${pedido.endereco}`;
-
-window.open("https://wa.me/5569992509281?text="+encodeURIComponent(msg));
 }
 
 function abrirPainel(){
-
-let senha = prompt("Digite a senha do administrador:");
-
+let senha = prompt("Digite a senha:");
 if(senha === senhaAdmin){
-    pedido.style.display="none";
-    painel.style.display="block";
-    carregarPainel();
-}else{
-    alert("Senha incorreta!");
+document.getElementById("painel").style.display = "block";
 }
-
 }
 
 function fecharPainel(){
-painel.style.display="none";
-pedido.style.display="block";
+document.getElementById("painel").style.display = "none";
 }
-
-function carregarPainel(){
-
-let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
-let hoje=new Date().toLocaleDateString();
-
-let total=0;
-let qtd=0;
-listaPedidos.innerHTML="";
-
-pedidos.forEach(p=>{
-if(p.data==hoje){
-total+=p.total;
-qtd++;
-listaPedidos.innerHTML+=`
-<div class="card">
-Nome: ${p.nome}<br>
-Total: R$ ${p.total.toFixed(2)}
-</div>`;
-}
-});
-
-totalDia.innerText=total.toFixed(2);
-qtdPedidos.innerText=qtd;
-}
-
 </script>
 
 </body>
+
 </html>
