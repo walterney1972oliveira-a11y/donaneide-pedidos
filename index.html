@@ -157,12 +157,24 @@ alert("Selecione os itens do pedido!");
 return;
 }
 
+let tamanhoTexto = document.getElementById("tamanho").options[document.getElementById("tamanho").selectedIndex].text;
+let bebidaTexto = document.getElementById("bebida").options[document.getElementById("bebida").selectedIndex].text;
+let localTexto = document.getElementById("localidade").options[document.getElementById("localidade").selectedIndex].text;
+
+let numeroPedido = Math.floor(Math.random() * 10000);
+
 let mensagem =
-"Pedido:\n\n" +
-"Nome: " + nome + "\n" +
-"Endereço: " + endereco + "\n" +
-"Pagamento: " + pagamento + "\n" +
-"Total: R$ " + total.toFixed(2);
+"🍛 NOVO PEDIDO - Dona Neide\n\n" +
+"🧾 Pedido Nº: " + numeroPedido + "\n\n" +
+"👤 Nome: " + nome + "\n" +
+"📍 Endereço: " + endereco + "\n" +
+"📦 Localidade: " + localTexto + "\n\n" +
+"🛒 Itens:\n" +
+"- " + tamanhoTexto + "\n" +
+"- " + bebidaTexto + "\n\n" +
+"💳 Pagamento: " + pagamento + "\n" +
+"💰 Total: R$ " + total.toFixed(2) + "\n\n" +
+"🙏 Obrigado pela preferência!";
 
 let telefone = "556992509281"; // coloque seu número com DDD
 
@@ -185,3 +197,4 @@ document.getElementById("painel").style.display = "none";
 </body>
 
 </html>
+
