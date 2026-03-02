@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Dona Neide Marmitaria - Sistema</title>
+<title>Dona Neide Marmitaria</title>
 
 <style>
 body{
@@ -12,62 +12,51 @@ body{
 }
 
 header{
-    background:#c0392b;
+    background:#ff6600;
     color:white;
     padding:15px;
     text-align:center;
     font-size:20px;
-    font-weight:bold;
 }
 
 .container{
-    max-width:500px;
-    margin:20px auto;
-    background:white;
     padding:20px;
-    border-radius:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-select,input,textarea{
+input, select, button{
     width:100%;
     padding:10px;
-    margin:6px 0;
+    margin:8px 0;
     border-radius:6px;
     border:1px solid #ccc;
 }
 
 button{
-    width:100%;
-    padding:12px;
-    background:#27ae60;
+    background:#28a745;
     color:white;
     border:none;
-    border-radius:6px;
+    font-weight:bold;
+}
+
+button:hover{
+    opacity:0.9;
+    cursor:pointer;
+}
+
+.total{
+    font-size:18px;
     font-weight:bold;
     margin-top:10px;
 }
 
-.admin-btn{
-    background:#34495e;
-}
-
-.total{
-    font-weight:bold;
-    text-align:center;
-    margin:10px 0;
-    font-size:18px;
-}
-
 .painel{
-    display:none;
+    background:#ffffff;
+    margin:20px;
+    padding:15px;
+    border-radius:8px;
 }
-.card{
-    background:#ecf0f1;
-    padding:10px;
-    margin:8px 0;
-    border-radius:6px;
-}
+</style>
+</head>
 
 <body>
 
@@ -81,6 +70,7 @@ button{
 
 <input type="text" id="nome" placeholder="Nome">
 <input type="text" id="endereco" placeholder="Endereço">
+
 <select id="tamanho" onchange="calcular()">
 <option value="">Tamanho</option>
 <option value="13.5">P - 13,50</option>
@@ -110,11 +100,11 @@ button{
 <div class="total" id="total">Total: R$ 0,00</div>
 
 <button onclick="finalizar()">Fazer Pedido</button>
-<button class="admin-btn" onclick="abrirPainel()">Painel Administrativo</button>
+<button onclick="abrirPainel()">Painel Administrativo</button>
 
 </div>
 
-<div class="container painel" id="painel">
+<div class="container painel" id="painel" style="display:none;">
 
 <h3>📊 Painel Administrativo</h3>
 
@@ -128,6 +118,7 @@ button{
 </div>
 
 <script>
+
 let senhaAdmin = "1972";
 
 function calcular(){
@@ -144,16 +135,22 @@ document.getElementById("total").innerText =
 }
 
 function finalizar(){
-let agora = new Date();
 
+let agora = new Date();
 let data = agora.toLocaleDateString("pt-BR");
 let hora = agora.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
+
 let nome = document.getElementById("nome").value;
 let endereco = document.getElementById("endereco").value;
 let pagamento = document.getElementById("pagamento").value;
 
 let totalTexto = document.getElementById("total").innerText;
 let total = parseFloat(totalTexto.replace("Total: R$ ", "")) || 0;
+
+if(nome.trim() === "" || endereco.trim() === ""){
+alert("Preencha nome e endereço!");
+return;
+}
 
 if(total === 0){
 alert("Selecione os itens do pedido!");
@@ -167,6 +164,10 @@ let localTexto = document.getElementById("localidade").options[document.getEleme
 let numeroPedido = localStorage.getItem("numeroPedido") || 0;
 numeroPedido++;
 localStorage.setItem("numeroPedido", numeroPedido);
+
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+pedidos.push({numero: numeroPedido, nome: nome, total: total, data: data, hora: hora});
+localStorage.setItem("pedidos", JSON.stringify(pedidos));
 
 let mensagem =
 "🍛 NOVO PEDIDO - Dona Neide\n\n" +
@@ -183,31 +184,25 @@ let mensagem =
 "💰 Total: R$ " + total.toFixed(2) + "\n\n" +
 "🙏 Obrigado pela preferência!";
 
-let telefone = "556992509281"; // coloque seu número com DDD
+let telefone = "5569SEUNUMEROAQUI"; // TROQUE AQUI
 
 window.open("https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem));
 
 }
-function abrirAdmin(){
 
-let senha = prompt("Digite a senha do administrador:");
+function abrirPainel(){
+let senha = prompt("Digite a senha:");
+if(senha === senhaAdmin){
 
-if(senha !== "1972")
-{
-alert("Senha incorreta!");
-return;
-}
-
-document.getElementById("admin").style.display = "block";
+document.getElementById("painel").style.display = "block";
 
 let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+let totalDia = 0;
 
 let html = "";
 
-if(pedidos.length === 0){
-html = "Nenhum pedido ainda.";
-}else{
 pedidos.forEach(p => {
+totalDia += parseFloat(p.total);
 html += `
 <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
 <strong>Pedido Nº ${p.numero}</strong><br>
@@ -217,34 +212,21 @@ Data: ${p.data} ${p.hora}
 </div>
 `;
 });
-}
 
+document.getElementById("totalDia").innerText = totalDia.toFixed(2);
+document.getElementById("qtdPedidos").innerText = pedidos.length;
 document.getElementById("listaPedidos").innerHTML = html;
-}
 
-function fecharAdmin(){
-document.getElementById("admin").style.display = "none";
-}
-function abrirPainel(){
-let senha = prompt("Digite a senha:");
-if(senha === senhaAdmin){
-document.getElementById("painel").style.display = "block";
+}else{
+alert("Senha incorreta!");
 }
 }
 
 function fecharPainel(){
 document.getElementById("painel").style.display = "none";
 }
+
 </script>
 
 </body>
-
 </html>
-
-
-
-
-
-
-
-
