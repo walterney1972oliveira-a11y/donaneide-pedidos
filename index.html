@@ -70,7 +70,13 @@ button{
 }
 </style>
 </head>
+<button onclick="abrirAdmin()">📊 Ver Pedidos</button>
 
+<div id="admin" style="display:none; background:#f4f4f4; padding:15px; margin-top:20px;">
+<h3>Pedidos Recebidos</h3>
+<div id="listaPedidos"></div>
+<button onclick="fecharAdmin()">Fechar</button>
+</div>
 <body>
 
 <header>Dona Neide Marmitaria 🍛</header>
@@ -188,7 +194,42 @@ let telefone = "556992509281"; // coloque seu número com DDD
 window.open("https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem));
 
 }
+function abrirAdmin(){
 
+let senha = prompt("Digite a senha do administrador:");
+
+if(senha !== "1234"){
+alert("Senha incorreta!");
+return;
+}
+
+document.getElementById("admin").style.display = "block";
+
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
+let html = "";
+
+if(pedidos.length === 0){
+html = "Nenhum pedido ainda.";
+}else{
+pedidos.forEach(p => {
+html += `
+<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+<strong>Pedido Nº ${p.numero}</strong><br>
+Nome: ${p.nome}<br>
+Total: R$ ${p.total}<br>
+Data: ${p.data} ${p.hora}
+</div>
+`;
+});
+}
+
+document.getElementById("listaPedidos").innerHTML = html;
+}
+
+function fecharAdmin(){
+document.getElementById("admin").style.display = "none";
+}
 function abrirPainel(){
 let senha = prompt("Digite a senha:");
 if(senha === senhaAdmin){
@@ -204,6 +245,7 @@ document.getElementById("painel").style.display = "none";
 </body>
 
 </html>
+
 
 
 
