@@ -2,236 +2,232 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Dona Neide Marmitaria</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dona Neide - Pedido Online</title>
 
 <style>
 body{
-    font-family: Arial;
-    background:#f4f6f9;
-    margin:0;
-}
-
-header{
-    background:#ff6600;
-    color:white;
-    padding:15px;
-    text-align:center;
-    font-size:20px;
+font-family: Arial, sans-serif;
+background: linear-gradient(135deg,#ff9f43,#ff6b6b);
+padding:20px;
 }
 
 .container{
-    padding:20px;
+background:#fff;
+padding:20px;
+border-radius:20px;
+max-width:420px;
+margin:auto;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
-input, select, button{
-    width:100%;
-    padding:10px;
-    margin:8px 0;
-    border-radius:6px;
-    border:1px solid #ccc;
+.logo{
+text-align:center;
+margin-bottom:10px;
+}
+
+.logo img{
+width:120px;
+border-radius:15px;
+}
+
+h2{
+text-align:center;
+color:#333;
+}
+
+select,input,button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #ccc;
+font-size:14px;
 }
 
 button{
-    background:#28a745;
-    color:white;
-    border:none;
-    font-weight:bold;
+background:#28a745;
+color:#fff;
+font-weight:bold;
+border:none;
+cursor:pointer;
+font-size:16px;
 }
 
 button:hover{
-    opacity:0.9;
-    cursor:pointer;
+background:#218838;
 }
 
 .total{
-    font-size:18px;
-    font-weight:bold;
-    margin-top:10px;
+font-size:18px;
+font-weight:bold;
+margin-top:10px;
+text-align:center;
+color:#000;
 }
 
-.painel{
-    background:#ffffff;
-    margin:20px;
-    padding:15px;
-    border-radius:8px;
+.pix-box{
+background:#f1f1f1;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<div style="text-align:center; margin-top:20px;">
-    <img src="logo.jpg" width="250" style="border-radius:20px; box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+<div class="container">
+
+<div class="logo">
+<img src="https://via.placeholder.com/150" alt="Logo">
 </div>
 
-<header>Dona Neide Marmitaria 🍛</header>
+<h2>🍛 Pedido Online</h2>
 
-<div class="container" id="pedido">
+<label><b>🍽 Escolha o prato:</b></label>
+<select id="prato"></select>
 
-<input type="text" id="nome" placeholder="Nome">
-<input type="text" id="endereco" placeholder="Endereço">
+<p style="font-size:13px;">
+Acompanha: Arroz, Macarrão, Feijão, Farofa, Banana Frita e Salada
+</p>
 
-<select id="tamanho" onchange="calcular()">
-<option value="">Tamanho</option>
-<option value="13.5">P - 13,50</option>
-<option value="16.5">M - 16,50</option>
-<option value="19.5">G - 19,50</option>
+<label><b>📦 Tamanho:</b></label>
+<select id="tamanho" onchange="calcularTotal()">
+<option value="">Selecione</option>
+<option value="P">Pequeno (P)</option>
+<option value="M">Médio (M)</option>
+<option value="G">Grande (G)</option>
 </select>
 
-<select id="bebida" onchange="calcular()">
-<option value="0">Sem bebida</option>
-<option value="5">Refri lata +5</option>
-<option value="8">Refri 2L +8</option>
+<label><b>🚚 Entrega:</b></label>
+<select id="entrega" onchange="calcularTotal()">
+<option value="0">Retirar no local (Grátis)</option>
+<option value="5">Entrega Bairro Próximo (+5)</option>
+<option value="8">Entrega Bairro Distante (+8)</option>
 </select>
 
-<select id="localidade" onchange="calcular()">
-<option value="">Entrega</option>
-<option value="0">Zona Leste</option>
-<option value="7">Outra localidade +7</option>
-</select>
-
+<label><b>💳 Pagamento:</b></label>
 <select id="pagamento">
-<option>Pagamento</option>
-<option>Pix</option>
 <option>Dinheiro</option>
+<option>PIX</option>
 <option>Cartão</option>
 </select>
 
-<div class="total" id="total">Total: R$ 0,00</div>
-
-<button onclick="finalizar()">Fazer Pedido</button>
-<button onclick="abrirPainel()">Painel Administrativo</button>
-
+<div class="pix-box">
+PIX: 69999999999<br>
+Nome: Dona Neide
 </div>
 
-<div class="container painel" id="painel" style="display:none;">
+<div class="total">
+Total: <span id="total">R$ 0.00</span>
+</div>
 
-<h3>📊 Painel Administrativo</h3>
+<input type="text" id="nome" placeholder="Seu nome">
+<input type="text" id="endereco" placeholder="Endereço">
 
-<p><strong>Total vendido hoje:</strong> R$ <span id="totalDia">0</span></p>
-<p><strong>Pedidos hoje:</strong> <span id="qtdPedidos">0</span></p>
-
-<div id="listaPedidos"></div>
-
-<button onclick="fecharPainel()">Voltar</button>
+<button onclick="finalizar()">Finalizar Pedido</button>
 
 </div>
 
 <script>
 
-let senhaAdmin = "1972";
+function carregarPratos() {
+let hoje = new Date().getDay();
+let pratoSelect = document.getElementById("prato");
 
-function calcular(){
+let cardapio = {
+1: ["Bife Acebolado", "Assado de Panela"],
+2: ["Frango ao Molho", "Bife Acebolado"],
+3: ["Filé de Frango", "Bisteca Bovina"],
+4: ["Calabresa Acebolada", "Assado de Panela"],
+5: ["Strogonoff de Frango", "Bife Acebolado"],
+6: ["Coxinha da Asa Assada", "Toscana Assada"]
+};
 
-let t = parseFloat(document.getElementById("tamanho").value) || 0;
-let b = parseFloat(document.getElementById("bebida").value) || 0;
-let l = parseFloat(document.getElementById("localidade").value) || 0;
+pratoSelect.innerHTML = '<option value="">Selecione o prato</option>';
 
-let total = t + b + l;
+if(cardapio[hoje]){
+cardapio[hoje].forEach(function(prato){
+let option = document.createElement("option");
+option.text = prato;
+option.value = prato;
+pratoSelect.appendChild(option);
+});
+}else{
+pratoSelect.innerHTML = '<option>Fechado hoje</option>';
+}
+}
 
-document.getElementById("total").innerText =
-"Total: R$ " + total.toFixed(2);
+function calcularTotal() {
+let tamanho = document.getElementById("tamanho").value;
+let entrega = parseFloat(document.getElementById("entrega").value);
+let total = 0;
 
+if (tamanho === "P") total = 15;
+if (tamanho === "M") total = 18;
+if (tamanho === "G") total = 22;
+
+total += entrega;
+
+document.getElementById("total").innerText = "R$ " + total.toFixed(2);
 }
 
 function finalizar(){
 
-let agora = new Date();
-let data = agora.toLocaleDateString("pt-BR");
-let hora = agora.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
-
+let prato = document.getElementById("prato").value;
+let tamanho = document.getElementById("tamanho").value;
+let entregaTexto = document.getElementById("entrega").selectedOptions[0].text;
+let pagamento = document.getElementById("pagamento").value;
 let nome = document.getElementById("nome").value;
 let endereco = document.getElementById("endereco").value;
-let pagamento = document.getElementById("pagamento").value;
+let total = document.getElementById("total").innerText;
 
-let totalTexto = document.getElementById("total").innerText;
-let total = parseFloat(totalTexto.replace("Total: R$ ", "")) || 0;
-
-if(nome.trim() === "" || endereco.trim() === ""){
-alert("Preencha nome e endereço!");
+if(prato === "" || tamanho === "" || nome === "" || endereco === ""){
+alert("Preencha todos os campos!");
 return;
 }
-
-if(total === 0){
-alert("Selecione os itens do pedido!");
-return;
-}
-
-let tamanhoTexto = document.getElementById("tamanho").options[document.getElementById("tamanho").selectedIndex].text;
-let bebidaTexto = document.getElementById("bebida").options[document.getElementById("bebida").selectedIndex].text;
-let localTexto = document.getElementById("localidade").options[document.getElementById("localidade").selectedIndex].text;
-
-let numeroPedido = localStorage.getItem("numeroPedido") || 0;
-numeroPedido++;
-localStorage.setItem("numeroPedido", numeroPedido);
-
-let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
-pedidos.push({numero: numeroPedido, nome: nome, total: total, data: data, hora: hora});
-localStorage.setItem("pedidos", JSON.stringify(pedidos));
 
 let mensagem =
 "🍛 NOVO PEDIDO - Dona Neide\n\n" +
-"🧾 Pedido Nº: " + numeroPedido + "\n" +
-"🕒 Data: " + data + "\n" +
-"⏰ Hora: " + hora + "\n\n" +
-"👤 Nome: " + nome + "\n" +
-"📍 Endereço: " + endereco + "\n" +
-"📦 Localidade: " + localTexto + "\n\n" +
-"🛒 Itens:\n" +
-"- " + tamanhoTexto + "\n" +
-"- " + bebidaTexto + "\n\n" +
+"🍽 Prato: " + prato + "\n" +
+"📦 Tamanho: " + tamanho + "\n" +
+"🚚 " + entregaTexto + "\n" +
 "💳 Pagamento: " + pagamento + "\n" +
-"💰 Total: R$ " + total.toFixed(2) + "\n\n" +
-"🙏 Obrigado pela preferência!";
+"💰 Total: " + total + "\n\n" +
+"👤 Nome: " + nome + "\n" +
+"📍 Endereço: " + endereco;
 
-let telefone = "5569992509281"; // TROQUE AQUI
-
-window.open("https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem));
-
-}
-
-function abrirPainel(){
-let senha = prompt("Digite a senha:");
-if(senha === senhaAdmin){
-
-document.getElementById("painel").style.display = "block";
-
-let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
-let totalDia = 0;
-
-let html = "";
-
-pedidos.forEach(p => {
-totalDia += parseFloat(p.total);
-html += `
-<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-<strong>Pedido Nº ${p.numero}</strong><br>
-Nome: ${p.nome}<br>
-Total: R$ ${p.total}<br>
-Data: ${p.data} ${p.hora}
-</div>
-`;
+// ENVIA PARA PLANILHA
+fetch("https://script.google.com/macros/s/AKfycbx7isZxOmjTSOHiu6cLWTT17TWTn5gc-xdfYH83GMHr-yxTQbTreFFMnfhQRPWbKwB_/exec", {
+method: "POST",
+mode: "no-cors",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+prato: prato,
+tamanho: tamanho,
+entrega: entregaTexto,
+pagamento: pagamento,
+total: total,
+nome: nome,
+endereco: endereco
+})
 });
 
-document.getElementById("totalDia").innerText = totalDia.toFixed(2);
-document.getElementById("qtdPedidos").innerText = pedidos.length;
-document.getElementById("listaPedidos").innerHTML = html;
+// ENVIA PARA WHATSAPP
+let numero = "5569SEUNUMEROAQUI"; // TROQUE PELO SEU WHATSAPP
+let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
 
-}else{
-alert("Senha incorreta!");
-}
+window.open(url, "_blank");
+
 }
 
-function fecharPainel(){
-document.getElementById("painel").style.display = "none";
-}
+carregarPratos();
 
 </script>
 
 </body>
 </html>
-
-
-
-
-
